@@ -1,3 +1,4 @@
+#pragma once
 // Know all the info to create the entitys, an orc is enemy? can be a tree
 // atacked? what is the sprite for
 #include "Entity.hpp"
@@ -5,18 +6,8 @@
 #include <Stardust-Celeste.hpp>
 #include <unordered_map>
 
-enum EntityEnum { None, LightTree, DarkTree, Soldier, Orc };
 
-enum RoleEntity { Hero, Enemy, Decor };
 
-struct EntityProperties {
-  int ID;
-  RoleEntity role;
-  bool isAnimated;
-  int life;
-  int attack;
-  u32 textureId;
-};
 
 class EntityManager : public Singleton {
 
@@ -27,6 +18,8 @@ public:
   }
   RefPtr<Entity> createEntity(EntityEnum type, glm::vec2 vec);
 
+  u32 cursorId;
+  u32 cursorOffsetId;
 private:
   EntityManager();
 

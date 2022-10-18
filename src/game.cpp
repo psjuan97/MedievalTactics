@@ -39,6 +39,22 @@ public:
     World::instance().getCursor()->move(std::any_cast<Direction>(d));
   }
 
+
+  static void moveEntity(std::any d) {
+    SC_APP_INFO("LETS move the entity!");
+    World::instance().getCursor()->moveEntity();
+  }
+ 
+   static void attackEntity(std::any d) {
+    SC_APP_INFO("LETS atacks!");
+    World::instance().getCursor()->attackEntity();
+  }
+ 
+
+
+
+
+
   static void select(std::any d) {
     SC_APP_INFO("LETS select the current entity!");
     World::instance().getCursor()->selectEntity();
@@ -70,6 +86,20 @@ public:
     vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::Space),
                            Utilities::KeyFlag::Press},
                           {GameState::select, Direction::right});
+
+
+    vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::M),
+                           Utilities::KeyFlag::Press},
+                          {GameState::moveEntity, Direction::right});
+
+
+    vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::K),
+                           Utilities::KeyFlag::Press},
+                          {GameState::attackEntity, Direction::right});
+
+
+
+
 
 
     Utilities::Input::add_controller(vitaCTRL);

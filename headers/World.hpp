@@ -5,6 +5,7 @@
 #include <vector>
 #include "Cursor.hpp"
 #include "Utilities/Singleton.hpp"
+#include "fwd.hpp"
 
 using namespace Stardust_Celeste;
 using namespace Stardust_Celeste::Utilities::Input;
@@ -62,6 +63,13 @@ public:
         return tilemap.get()->tileMap.at(idx)->entity;
     }
 
+    auto getTile(glm::vec2 cord){
+        return tilemap->get_tile_map().at(cord.x * MAP_SIZE + cord.y );
+    }
+
+    auto flushTileMap(){
+        tilemap->generate_map();
+    }
 private:
     World(){};
     ScopePtr<ISOTileMap> tilemap;

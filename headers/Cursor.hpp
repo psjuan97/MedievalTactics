@@ -12,14 +12,15 @@ class Cursor : public Entity {
 public:
   Cursor(u32 idSprite, glm::vec2 coords);
 
-
+  auto getNearTiles(RefPtr<Entity> ent);
   void selectEntity();
-
+  void moveEntity();
+  void attackEntity();
+  
   void move(Direction dir);
 
   void applyChange();
 
 private:
-  glm::vec2 coord;
   RefPtr<Entity> selectedEntity = nullptr; 
 };

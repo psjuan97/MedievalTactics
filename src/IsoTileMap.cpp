@@ -60,7 +60,7 @@ void ISOTileMap::generate_tiles() {
       {EntityEnum::Orc, EntityEnum::None, EntityEnum::None, EntityEnum::None,
        EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
       {EntityEnum::None, EntityEnum::None, EntityEnum::Orc, EntityEnum::None,
-       EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+       EntityEnum::Orc, EntityEnum::None, EntityEnum::None, EntityEnum::None},
       {EntityEnum::None, EntityEnum::LightTree, EntityEnum::None,
        EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
        EntityEnum::None},

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.17)
-project(Example)
+project(MedievalTactics)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -20,14 +20,16 @@ FILE(GLOB_RECURSE SRCS "src/*.cpp" "src/*.c")
 
 add_subdirectory(Stardust-Celeste)
 
-add_executable(Example ${SRCS})
-target_include_directories(Example PUBLIC ./headers ../include/ ../ext/glm/glm/)
-target_link_libraries(Example SC-Entry Stardust-Celeste)
+add_executable(MedievalTactics ${SRCS})
+target_include_directories(MedievalTactics PUBLIC ./headers ../include/ ../ext/glm/glm/)
+target_link_libraries(MedievalTactics SC-Entry Stardust-Celeste)
 
 if(PSP)
     create_pbp_file(
-        TARGET Example
-        TITLE Example
+        TARGET MedievalTactics
+        ICON_PATH "/home/juan/Escritorio/MedievalTactics/sce_sys/icon0.png"
+        BACKGROUND_PATH "/home/juan/Escritorio/MedievalTactics/sce_sys/bg.png"
+        TITLE MedievalTactics
         BUILD_PRX 1
     )
 endif()
