@@ -6,7 +6,6 @@
 
 class World;
 
-enum Direction { up, down, left, right };
 
 class Cursor : public Entity {
 public:
@@ -16,11 +15,12 @@ public:
   void selectEntity();
   void moveEntity();
   void attackEntity();
-  
+
+
   void move(Direction dir);
 
   void applyChange();
 
 private:
-  RefPtr<Entity> selectedEntity = nullptr; 
+  RefPtr<Entity> selectedEntity = nullptr;
 };

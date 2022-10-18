@@ -9,3 +9,23 @@ glm::vec2 calculate_pixels(int x, int y) {
 
   return glm::vec2(screen_x, screen_y);
 }
+
+
+Direction getOrientationFromCoords(glm::vec2 ori, glm::vec2 dest) {
+
+  auto calc = ori - dest;
+
+  if (calc.x > 0) {
+    return Direction::left;
+
+  } else if (calc.x < 0) {
+    return Direction::right;
+  }
+
+  if (calc.y > 0) {
+    return Direction::up;
+
+  } else {
+    return Direction::down;
+  }
+}

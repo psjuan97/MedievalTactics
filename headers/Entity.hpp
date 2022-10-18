@@ -16,12 +16,12 @@ using namespace Stardust_Celeste;
 using namespace Stardust_Celeste::Utilities::Input;
 using namespace Stardust_Celeste::Graphics::G2D;
 
-enum EntityEnum { None, LightTree, DarkTree, Soldier, Orc };
+enum EntityEnum { None, LightTree, DarkTree, Soldier, Orc, House };
 
-enum RoleEntity { Hero, Enemy, Decor };
+enum RoleEntity { Hero, Enemy, Decor, Building };
 
 struct EntityProperties {
-  int ID;
+  EntityEnum enumType;
   RoleEntity role;
   bool isAnimated;
   int life;
@@ -30,64 +30,36 @@ struct EntityProperties {
   u32 textureId;
 };
 
-class Entity {
+class Entity : public std::enable_shared_from_this<Entity> {
 
 public:
   static std::unordered_map<int, u32> sprite_map;
 
 public:
-  Entity(u32 idSprite, glm::vec2 coords, bool isAnimated = false) {
-
-    auto pos = calculate_pixels(coords.x, coords.y);
-
-    auto bounds =
-        Rendering::Rectangle{pos, glm::vec2(TILE_SIZE_W - 5, TILE_SIZE_H - 5)};
-
-    if (isAnimated) {
-      sprite =
-          create_scopeptr<AnimatedSprite>(idSprite, bounds, glm::vec2{2, 1});
-    } else {
-      sprite = create_scopeptr<Graphics::G2D::Sprite>(idSprite, bounds);
-    }
-
-    sprite->set_layer(1);
-    this->idSprite = idSprite;
-    this->coords = coords;
-  };
+  Entity(u32 idSprite, glm::vec2 coords, bool isAnimated = false);
 
   void select() { sprite->set_color(Rendering::Color{255, 0, 255, 255}); }
 
   void unSelect() { sprite->set_color(Rendering::Color{255, 255, 255, 255}); }
 
-  void update(double dt) {
-    if (sprite)
-      sprite->update(dt);
-    else
-      SC_APP_INFO("INVISIBLE ENTITY");
-  }
+  void setArrow(u32 idSprite);
 
-  void draw() {
-    if (sprite)
-      sprite->draw();
-    else
-      SC_APP_INFO("INVISIBLE ENTITY");
-  };
+  RefPtr<Graphics::G2D::Sprite> getArrow();
+
+  void update(double dt);
+
+  void draw();
+
+  glm::vec2 getCoords();
+
+  // POR CADA SER COORDS HAY QUE MODIDICA EL TILEMAP
+  void setCoords(glm::vec2 c);
+
   EntityProperties props;
-
-  glm::vec2 getCoords() { return coords; }
-
-  void setCoords(glm::vec2 c) {
-    coords = c;
-    auto pos = calculate_pixels(coords.x, coords.y);
-
-    auto bounds =
-        Rendering::Rectangle{pos, glm::vec2(TILE_SIZE_W - 5, TILE_SIZE_H - 5)};
-
-    sprite->set_rect(bounds);
-  }
-
+  bool isMoved = false;
 protected:
   glm::vec2 coords;
   u32 idSprite;
   RefPtr<Graphics::G2D::Sprite> sprite = nullptr;
+  RefPtr<Graphics::G2D::Sprite> arrow = nullptr;
 };

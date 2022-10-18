@@ -3,6 +3,8 @@
 
 void World::update( double dt){
 
+        //General
+
         auto tiles = tilemap->get_tile_map();
         for( int i = 0; i < tiles.size() ; i++){
             // pls kill me
@@ -11,5 +13,5 @@ void World::update( double dt){
             if(tile->entity){
                 tile->entity->update(dt);
             }
-       }
+       }   
 }

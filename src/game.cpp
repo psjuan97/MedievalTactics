@@ -7,8 +7,8 @@
 #include <Utilities/Controllers/VitaController.hpp>
 #include <Utilities/Input.hpp>
 
-#include <World.hpp>
 #include "EntityManager.hpp"
+#include <World.hpp>
 
 using namespace Stardust_Celeste;
 using namespace Stardust_Celeste::Utilities::Input;
@@ -23,7 +23,6 @@ public:
     Utilities::Input::update();
 
     World::instance().update(dt);
-
   }
   void on_draw(Core::Application *app, double dt) { World::instance().draw(); }
 
@@ -39,26 +38,29 @@ public:
     World::instance().getCursor()->move(std::any_cast<Direction>(d));
   }
 
-
   static void moveEntity(std::any d) {
     SC_APP_INFO("LETS move the entity!");
     World::instance().getCursor()->moveEntity();
   }
- 
-   static void attackEntity(std::any d) {
+
+  static void attackEntity(std::any d) {
     SC_APP_INFO("LETS atacks!");
     World::instance().getCursor()->attackEntity();
   }
- 
-
-
-
-
 
   static void select(std::any d) {
     SC_APP_INFO("LETS select the current entity!");
     World::instance().getCursor()->selectEntity();
   }
+
+
+
+  static void enemyTurn(std::any t) {
+    SC_APP_INFO("ENEMY TURN");
+    World::instance().enemyTurn();
+  }
+
+
 
 
   void on_start() {
@@ -73,7 +75,7 @@ public:
     vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::S),
                            Utilities::KeyFlag::Press},
                           {GameState::move, Direction::down});
-                          
+
     vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::A),
                            Utilities::KeyFlag::Press},
                           {GameState::move, Direction::left});
@@ -82,24 +84,18 @@ public:
                            Utilities::KeyFlag::Press},
                           {GameState::move, Direction::right});
 
-
     vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::Space),
                            Utilities::KeyFlag::Press},
                           {GameState::select, Direction::right});
-
 
     vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::M),
                            Utilities::KeyFlag::Press},
                           {GameState::moveEntity, Direction::right});
 
 
-    vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::K),
+    vitaCTRL->add_command({static_cast<int>(Utilities::Input::Keys::T),
                            Utilities::KeyFlag::Press},
-                          {GameState::attackEntity, Direction::right});
-
-
-
-
+                          {GameState::enemyTurn, Direction::right});
 
 
     Utilities::Input::add_controller(vitaCTRL);

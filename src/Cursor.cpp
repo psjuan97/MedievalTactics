@@ -1,7 +1,10 @@
 #include "Cursor.hpp"
 #include "Entity.hpp"
+#include "EntityManager.hpp"
 #include "World.hpp"
+#include "fwd.hpp"
 #include <vector>
+
 
 Cursor::Cursor(u32 idSprite, glm::vec2 coords) : Entity(idSprite, coords) {}
 
@@ -32,6 +35,7 @@ auto Cursor::getNearTiles(RefPtr<Entity> ent) {
   return list;
 }
 
+
 void Cursor::attackEntity() {
 
   if (selectedEntity) {
@@ -45,7 +49,6 @@ void Cursor::attackEntity() {
     bool valid = d.x <= distance && d.y <= distance;
     if (valid && World::instance().getTile(cursorCoords)->entity != nullptr) {
       SC_APP_INFO("Atacamos entidad!!!");
-
     }
   }
 }
@@ -73,8 +76,6 @@ void Cursor::moveEntity() {
       }
 
       World::instance().getTile(selectedEntity->getCoords())->entity = nullptr;
-      World::instance().getTile(this->getCoords())->entity = selectedEntity;
-      // if we do it right this is not necesary
 
       selectedEntity->setCoords(cursorCoords);
 

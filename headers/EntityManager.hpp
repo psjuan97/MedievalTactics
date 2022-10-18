@@ -18,6 +18,12 @@ public:
   }
   RefPtr<Entity> createEntity(EntityEnum type, glm::vec2 vec);
 
+  u32 arrow_right;
+  u32 arrow_left;
+
+  u32 arrow_up;
+  u32 arrow_down;
+
   u32 cursorId;
   u32 cursorOffsetId;
 private:

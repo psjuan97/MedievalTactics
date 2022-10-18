@@ -1,4 +1,5 @@
 #include "EntityManager.hpp"
+#include "Entity.hpp"
 using namespace Stardust_Celeste;
 
 EntityManager::EntityManager() {
@@ -34,29 +35,50 @@ EntityManager::EntityManager() {
       "./assets/orc_iddle_down.png", SC_TEX_FILTER_NEAREST,
       SC_TEX_FILTER_NEAREST, true);
 
-
   u32 text_cursor_offset_id = Rendering::TextureManager::get().load_texture(
-      "./assets/movement_offset.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      "./assets/movement_offset.png", SC_TEX_FILTER_NEAREST,
+      SC_TEX_FILTER_NEAREST, true);
+
+  u32 text_house_id = Rendering::TextureManager::get().load_texture(
+      "./assets/house.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST, true);
+
+  arrow_up = Rendering::TextureManager::get().load_texture(
+      "./assets/arrow_up.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
       true);
 
-    cursorId = text_cursor_id;
-    cursorOffsetId = text_cursor_offset_id;
+  arrow_down = Rendering::TextureManager::get().load_texture(
+      "./assets/arrow_down.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  arrow_left = Rendering::TextureManager::get().load_texture(
+      "./assets/arrow_left.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  arrow_right = Rendering::TextureManager::get().load_texture(
+      "./assets/arrow_right.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  cursorId = text_cursor_id;
+  cursorOffsetId = text_cursor_offset_id;
 
   entityBlueprints[EntityEnum::LightTree] =
-      EntityProperties{0, RoleEntity::Decor, false, 1, 0, 0, text_tree_id};
+      EntityProperties{EntityEnum::LightTree, RoleEntity::Decor, false, 1, 0, 0, text_tree_id};
   entityBlueprints[EntityEnum::DarkTree] =
-      EntityProperties{0, RoleEntity::Decor, false, 1, 0, 0,text_tree2_id};
+      EntityProperties{EntityEnum::DarkTree, RoleEntity::Decor, false, 1, 0, 0, text_tree2_id};
   entityBlueprints[EntityEnum::Orc] =
-      EntityProperties{0, RoleEntity::Enemy, true, 3, 1, 2, text_orc_id};
+      EntityProperties{EntityEnum::Orc, RoleEntity::Enemy, true, 3, 1, 2, text_orc_id};
   entityBlueprints[EntityEnum::Soldier] =
-      EntityProperties{0, RoleEntity::Hero, true, 5, 1,  3,text_sword1_id};
+      EntityProperties{EntityEnum::Soldier, RoleEntity::Hero, true, 5, 1, 3, text_sword1_id};
+  entityBlueprints[EntityEnum::House] =
+      EntityProperties{EntityEnum::House, RoleEntity::Building, false, 1, 0, 0, text_house_id};
 }
 
 // i dont know if is necessary that a entity have the coords
 RefPtr<Entity> EntityManager::createEntity(EntityEnum type, glm::vec2 vec) {
   if (type == EntityEnum::None)
     return nullptr;
-    // maybe better idea to have a contructor to pass onlye de type, so the entity have to acces to the blue prints
+  // maybe better idea to have a contructor to pass onlye de type, so the entity
+  // have to acces to the blue prints
   EntityProperties props = entityBlueprints[type];
   auto entity = create_refptr<Entity>(props.textureId, vec, props.isAnimated);
   entity->props = props;
