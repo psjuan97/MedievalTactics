@@ -5,7 +5,6 @@
 #include "fwd.hpp"
 #include <vector>
 
-
 Cursor::Cursor(u32 idSprite, glm::vec2 coords) : Entity(idSprite, coords) {}
 
 auto Cursor::getNearTiles(RefPtr<Entity> ent) {
@@ -35,7 +34,6 @@ auto Cursor::getNearTiles(RefPtr<Entity> ent) {
   return list;
 }
 
-
 void Cursor::attackEntity() {
 
   if (selectedEntity) {
@@ -49,6 +47,14 @@ void Cursor::attackEntity() {
     bool valid = d.x <= distance && d.y <= distance;
     if (valid && World::instance().getTile(cursorCoords)->entity != nullptr) {
       SC_APP_INFO("Atacamos entidad!!!");
+
+      //DESENCADENAR ATAQUE
+      selectedEntity->attack();
+
+
+
+
+
     }
   }
 }
@@ -152,3 +158,4 @@ void Cursor::applyChange() {
   sprite = create_scopeptr<Graphics::G2D::Sprite>(idSprite, bounds);
   sprite->set_layer(1);
 }
+

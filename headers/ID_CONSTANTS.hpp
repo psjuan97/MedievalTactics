@@ -14,10 +14,10 @@ const int ORC = 6;
 const int W_WINDOW = 480;
 const int H_WINDOW = 270;
 
-const int TILE_SIZE_W = 32;
-const int TILE_SIZE_H = 23;
+const int TILE_SIZE_W = 32 *1.4 ;
+const int TILE_SIZE_H = 23 *1.4;
 
 const int OFFSET_X = W_WINDOW / 2;
-const int OFFSET_Y = 20;
+const int OFFSET_Y = 5;
 
 const int MAP_SIZE = 8;

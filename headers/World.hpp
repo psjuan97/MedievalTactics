@@ -2,6 +2,7 @@
 
 #include "Cursor.hpp"
 #include "EntityManager.hpp"
+#include "Utilities/Types.hpp"
 #include "Utils.hpp"
 
 #include "IsoTileMap.hpp"
@@ -129,7 +130,8 @@ public:
     for (int i = 0; i < tiles.size(); i++) {
       auto tile = tiles.at(i);
       auto enemy = tile->entity;
-      if (enemy && enemy->props.role == RoleEntity::Enemy && enemy->isMoved == false) {
+      if (enemy && enemy->props.role == RoleEntity::Enemy &&
+          enemy->isMoved == false) {
         enemy->isMoved = true;
         SC_APP_INFO("Enemigo en tile {}", i);
         auto hero = l[i % l.size()];
@@ -157,13 +159,32 @@ public:
           World::instance().flushTileMap();
         }
 
-        showEnemyActions(enemy, hero);
+        // if distance between two is less than one tile, then no attack
+        if (pathSize == 1 ||pathSize == 0 ) { // is this correct?
+          showEnemyActions(enemy, hero);
+          enemy->pedingAction = 1;
+        }
       }
     }
     // iterate over all the enemies
     // Move the enemies to the hero and house
 
     // tell the world their intention
+  }
+
+  auto getEnemies() {
+    std::vector<RefPtr<Entity>> l = {};
+    auto tiles = tilemap->get_tile_map();
+
+    for (int i = 0; i < tiles.size(); i++) {
+      auto tile = tiles.at(i);
+      auto enemy = tile->entity;
+      if (enemy && enemy->props.role == RoleEntity::Enemy) {
+        l.push_back(enemy);
+      }
+    }
+
+    return l;
   }
 
 private:

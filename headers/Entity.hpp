@@ -28,6 +28,7 @@ struct EntityProperties {
   int attack;
   int moveDistance;
   u32 textureId;
+  u32 texactionId;
 };
 
 class Entity : public std::enable_shared_from_this<Entity> {
@@ -37,6 +38,8 @@ public:
 
 public:
   Entity(u32 idSprite, glm::vec2 coords, bool isAnimated = false);
+
+  void attack();
 
   void select() { sprite->set_color(Rendering::Color{255, 0, 255, 255}); }
 
@@ -57,9 +60,32 @@ public:
 
   EntityProperties props;
   bool isMoved = false;
+  int pedingAction = 0; // 0 no peding, 1 pending, 2 in progress
+
+  void refreshAttackSprite() {
+    auto pos = calculate_pixels(coords.x, coords.y);
+
+    actionSprite->set_position(pos);
+  }
+
+  void setActionSprite(u32 id) {
+    auto pos = calculate_pixels(coords.x, coords.y);
+
+    auto bounds =
+        Rendering::Rectangle{pos, glm::vec2(TILE_SIZE_W - 5, TILE_SIZE_H - 5)};
+
+    actionSprite = create_scopeptr<AnimatedSprite>(id, bounds, glm::vec2{7, 1});
+    actionSprite->set_layer(1);
+    actionSprite->ticksPerSec = 12;
+  }
+
+  void removeArrow() { arrow = nullptr; }
+
 protected:
   glm::vec2 coords;
   u32 idSprite;
+  u32 idAttackSprite;
   RefPtr<Graphics::G2D::Sprite> sprite = nullptr;
   RefPtr<Graphics::G2D::Sprite> arrow = nullptr;
+  RefPtr<Graphics::G2D::AnimatedSprite> actionSprite = nullptr;
 };

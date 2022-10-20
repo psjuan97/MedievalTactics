@@ -28,7 +28,7 @@ EntityEnum entities[8][8] = {
      EntityEnum::None},
     {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
      EntityEnum::None, EntityEnum::Soldier, EntityEnum::None, EntityEnum::None},
-    {EntityEnum::Soldier, EntityEnum::None, EntityEnum::None,
+    {EntityEnum::House, EntityEnum::None, EntityEnum::None,
      EntityEnum::DarkTree, EntityEnum::LightTree, EntityEnum::None,
      EntityEnum::House, EntityEnum::None},
 };

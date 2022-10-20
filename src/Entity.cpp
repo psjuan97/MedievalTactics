@@ -25,31 +25,51 @@ Entity::Entity(u32 idSprite, glm::vec2 coords, bool isAnimated) {
 };
 
 void Entity::update(double dt) {
-  if (sprite)
-    sprite->update(dt);
-  else
-    SC_APP_INFO("INVISIBLE ENTITY");
+
+  if (pedingAction == 2) {
+    // we need to count and reset pedingAction to 0
+
+    if (actionSprite) {
+      actionSprite->update(dt);
+
+      if (actionSprite->animEnd == true) {
+        actionSprite->animEnd =false;
+        pedingAction = 0;
+        removeArrow();
+      }
+    }
+
+  } else {
+    if (sprite)
+      sprite->update(dt);
+  }
 }
 
 void Entity::draw() {
-  if (sprite)
-    sprite->draw();
-  else
-    SC_APP_INFO("INVISIBLE ENTITY");
+  if (pedingAction == 2) {
+    if (actionSprite)
+      actionSprite->draw();
+    else
+      SC_APP_INFO("INVISIBLE ATTACK!!!!!!!");
+  } else {
+
+    if (sprite)
+      sprite->draw();
+    else
+      SC_APP_INFO("INVISIBLE ENTITY");
+  }
 };
 
 glm::vec2 Entity::getCoords() { return coords; }
 #include <memory>
 
-// POR CADA SER COORDS HAY QUE MODIDICA EL TILEMAP
+// POR CADA SEtCOORDS HAY QUE MODIDICA EL TILEMAP
 void Entity::setCoords(glm::vec2 c) {
   this->coords = c;
 
   if (World::instance().getTile(coords)->entity != nullptr) {
     SC_APP_INFO("ENTIDAD VA A DESAPARECER!!");
-    SC_APP_INFO("vec2 {} {}",coords.x, coords.y );
-
-
+    SC_APP_INFO("vec2 {} {}", coords.x, coords.y);
   }
   World::instance().getTile(coords)->entity = shared_from_this();
   auto pos = calculate_pixels(coords.x, coords.y);
@@ -69,4 +89,15 @@ void Entity::setArrow(u32 idSprite) {
 
   arrow = create_scopeptr<Sprite>(idSprite, bounds);
   arrow->set_layer(1);
+}
+
+void Entity::attack() {
+
+  SC_APP_INFO("ENTIDAD EN {}-{} ATACANDO!!", coords.x, coords.y);
+
+  // check coord objetive, get atity and apply damage.
+  // set to play animation
+
+  this->refreshAttackSprite();
+  this->pedingAction = 2;
 }
