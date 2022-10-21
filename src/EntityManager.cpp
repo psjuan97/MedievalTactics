@@ -1,5 +1,8 @@
 #include "EntityManager.hpp"
 #include "Entity.hpp"
+
+#include "Graphics/2D/FontRenderer.hpp"
+
 using namespace Stardust_Celeste;
 
 EntityManager::EntityManager() {
@@ -62,8 +65,43 @@ EntityManager::EntityManager() {
       "./assets/orc_attack_down.png", SC_TEX_FILTER_NEAREST,
       SC_TEX_FILTER_NEAREST, true);
 
+  auto hero_attack = Rendering::TextureManager::get().load_texture(
+      "./assets/swordup.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  auto graveyard = Rendering::TextureManager::get().load_texture(
+      "./assets/graveyard.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  hud_cursor = Rendering::TextureManager::get().load_texture(
+      "./assets/hud_cursor.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  hud_cross = Rendering::TextureManager::get().load_texture(
+      "./assets/hud_select.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  hud_square = Rendering::TextureManager::get().load_texture(
+      "./assets/hud_square.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  hud_triangle = Rendering::TextureManager::get().load_texture(
+      "./assets/hud_triangle.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  hud_circle = Rendering::TextureManager::get().load_texture(
+      "./assets/hud_circle.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+  fontID = Rendering::TextureManager::get().load_texture(
+      "./assets/default.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true, false, true);
+
   cursorId = text_cursor_id;
   cursorOffsetId = text_cursor_offset_id;
+
+  entityBlueprints[EntityEnum::Graveyard] = EntityProperties{
+      EntityEnum::Graveyard, RoleEntity::Misc, false, 1, 0, 0, graveyard, 0};
 
   entityBlueprints[EntityEnum::LightTree] =
       EntityProperties{EntityEnum::LightTree,
@@ -71,7 +109,7 @@ EntityManager::EntityManager() {
                        false,
                        1,
                        0,
-                       0,
+                       1,
                        text_tree_id,
                        0};
   entityBlueprints[EntityEnum::DarkTree] =
@@ -80,14 +118,15 @@ EntityManager::EntityManager() {
                        false,
                        1,
                        0,
-                       0,
+                       1,
                        text_tree2_id,
                        0};
   entityBlueprints[EntityEnum::Orc] =
       EntityProperties{EntityEnum::Orc, RoleEntity::Enemy, true, 3, 1, 2,
                        text_orc_id,     orc_attack};
-  entityBlueprints[EntityEnum::Soldier] = EntityProperties{
-      EntityEnum::Soldier, RoleEntity::Hero, true, 5, 1, 3, text_sword1_id, 0};
+  entityBlueprints[EntityEnum::Soldier] =
+      EntityProperties{EntityEnum::Soldier, RoleEntity::Hero, true, 5, 1, 3,
+                       text_sword1_id,      hero_attack};
   entityBlueprints[EntityEnum::House] = EntityProperties{EntityEnum::House,
                                                          RoleEntity::Building,
                                                          false,
@@ -109,9 +148,11 @@ RefPtr<Entity> EntityManager::createEntity(EntityEnum type, glm::vec2 vec) {
   entity->props = props;
 
   if (props.texactionId != 0) {
-    
+
     entity->setActionSprite(props.texactionId);
   }
+
+  entity->setLife(props.life);
 
   return entity;
 }

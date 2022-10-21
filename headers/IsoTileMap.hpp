@@ -11,7 +11,12 @@ struct ISOTile : public Graphics::G2D::Tile {
 class ISOTileMap : public Graphics::G2D::Tilemap {
 public:
   ISOTileMap(u32 texture, glm::vec2 atlasSize)
-      : Graphics::G2D::Tilemap(texture, atlasSize){};
+      : Graphics::G2D::Tilemap(texture, atlasSize) {
+
+    randomMap();
+  };
+
+  void randomMap();
 
   void generate_tiles();
   auto generate_map() -> void;
@@ -21,7 +26,7 @@ public:
   std::vector<RefPtr<ISOTile>> get_tile_map() { return tileMap; }
   auto add_tile(ISOTile tile) -> void;
 
- std::vector<glm::vec2> getPath(glm::vec2 from, glm::vec2 to);
+  std::vector<glm::vec2> getPath(glm::vec2 from, glm::vec2 to);
 
 public:
   std::vector<RefPtr<ISOTile>> tileMap;

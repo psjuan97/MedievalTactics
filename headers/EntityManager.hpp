@@ -26,8 +26,15 @@ public:
 
   u32 cursorId;
   u32 cursorOffsetId;
+  u32 fontID;
+
+  u32 hud_cursor;
+  u32 hud_cross;
+  u32 hud_square;
+  u32 hud_triangle;
+  u32 hud_circle;
 private:
   EntityManager();
-
+  
   std::unordered_map<EntityEnum, EntityProperties> entityBlueprints;
 };

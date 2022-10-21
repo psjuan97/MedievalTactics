@@ -16,9 +16,9 @@ using namespace Stardust_Celeste;
 using namespace Stardust_Celeste::Utilities::Input;
 using namespace Stardust_Celeste::Graphics::G2D;
 
-enum EntityEnum { None, LightTree, DarkTree, Soldier, Orc, House };
+enum EntityEnum { None, LightTree, DarkTree, Soldier, Orc, House, Graveyard };
 
-enum RoleEntity { Hero, Enemy, Decor, Building };
+enum RoleEntity { Hero, Enemy, Decor, Building, Misc };
 
 struct EntityProperties {
   EntityEnum enumType;
@@ -38,8 +38,8 @@ public:
 
 public:
   Entity(u32 idSprite, glm::vec2 coords, bool isAnimated = false);
-
-  void attack();
+  void setLife(int l);
+  void attack(RefPtr<Entity> objetive);
 
   void select() { sprite->set_color(Rendering::Color{255, 0, 255, 255}); }
 
@@ -81,11 +81,23 @@ public:
 
   void removeArrow() { arrow = nullptr; }
 
+  void receiveDamage(int pto);
+
+  void setObjetive(RefPtr<Entity> e) { objetive = e; }
+
+  bool isLife(){
+    return life>0;
+  }
+  RefPtr<Entity> getObjetive() { return objetive; }
+
 protected:
   glm::vec2 coords;
   u32 idSprite;
   u32 idAttackSprite;
+  int life = 1;
   RefPtr<Graphics::G2D::Sprite> sprite = nullptr;
   RefPtr<Graphics::G2D::Sprite> arrow = nullptr;
   RefPtr<Graphics::G2D::AnimatedSprite> actionSprite = nullptr;
+
+  RefPtr<Entity> objetive = nullptr;
 };

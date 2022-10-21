@@ -1,4 +1,5 @@
 #pragma once
+#include "EntityManager.hpp"
 #include "World.hpp"
 #include <Entity.hpp>
 #include <cstddef>
@@ -24,6 +25,8 @@ Entity::Entity(u32 idSprite, glm::vec2 coords, bool isAnimated) {
   this->coords = coords;
 };
 
+void Entity::setLife(int l) { life = l; }
+
 void Entity::update(double dt) {
 
   if (pedingAction == 2) {
@@ -33,7 +36,7 @@ void Entity::update(double dt) {
       actionSprite->update(dt);
 
       if (actionSprite->animEnd == true) {
-        actionSprite->animEnd =false;
+        actionSprite->animEnd = false;
         pedingAction = 0;
         removeArrow();
       }
@@ -91,13 +94,29 @@ void Entity::setArrow(u32 idSprite) {
   arrow->set_layer(1);
 }
 
-void Entity::attack() {
+void Entity::attack(RefPtr<Entity> objetive) {
 
   SC_APP_INFO("ENTIDAD EN {}-{} ATACANDO!!", coords.x, coords.y);
 
   // check coord objetive, get atity and apply damage.
   // set to play animation
 
+  // mebye here is not a good ide
+  objetive->receiveDamage(this->props.attack);
+  
+  this->objetive = nullptr;
   this->refreshAttackSprite();
   this->pedingAction = 2;
+}
+
+void Entity::receiveDamage(int pto) {
+  life = life - pto;
+  if (life <= 0) {
+
+    // entidad muerta, nos DESTRUIMOS Y PEDIMOS AL ENTITY MANAGER QUE CREE UNA
+    // TUMBA EN NUESTRA POSICION.
+    auto grav =
+        EntityManager::instance().createEntity(EntityEnum::Graveyard, coords);
+    grav->setCoords(coords);
+  }
 }

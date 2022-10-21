@@ -45,16 +45,14 @@ void Cursor::attackEntity() {
     auto d = glm::abs(entityCoords - cursorCoords);
 
     bool valid = d.x <= distance && d.y <= distance;
-    if (valid && World::instance().getTile(cursorCoords)->entity != nullptr) {
+    auto objetive = World::instance().getTile(cursorCoords)->entity;
+    if (valid && objetive != nullptr) {
       SC_APP_INFO("Atacamos entidad!!!");
 
-      //DESENCADENAR ATAQUE
-      selectedEntity->attack();
+      World::instance().showEnemyActions(selectedEntity, objetive);
 
-
-
-
-
+      // DESENCADENAR ATAQUE
+      selectedEntity->attack(objetive);
     }
   }
 }
@@ -63,7 +61,8 @@ void Cursor::moveEntity() {
 
   // is valid movement?
   // ent.coords, ent.distance cursor.coords
-  if (selectedEntity) {
+  if (selectedEntity && selectedEntity->isMoved == false) {
+    selectedEntity->isMoved = true;
     auto entityCoords = selectedEntity->getCoords();
     auto cursorCoords = this->coords;
 
@@ -112,6 +111,11 @@ void Cursor::selectEntity() {
   }
 
   if (ent) {
+
+    if (ent->props.enumType == EntityEnum::Orc) {
+      return;
+    }
+
     SC_APP_INFO("Enidad seleccionada");
     ent->select();
     selectedEntity = ent;
@@ -158,4 +162,3 @@ void Cursor::applyChange() {
   sprite = create_scopeptr<Graphics::G2D::Sprite>(idSprite, bounds);
   sprite->set_layer(1);
 }
-

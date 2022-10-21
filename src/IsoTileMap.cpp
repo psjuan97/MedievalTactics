@@ -13,25 +13,70 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
 EntityEnum entities[8][8] = {
     {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
      EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
-    {EntityEnum::DarkTree, EntityEnum::DarkTree, EntityEnum::None,
-     EntityEnum::None, EntityEnum::DarkTree, EntityEnum::None, EntityEnum::Orc,
-     EntityEnum::None},
     {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
-     EntityEnum::None, EntityEnum::None, EntityEnum::LightTree,
-     EntityEnum::None},
-    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
-     EntityEnum::Orc, EntityEnum::None, EntityEnum::None, EntityEnum::None},
-    {EntityEnum::None, EntityEnum::None, EntityEnum::Orc, EntityEnum::None,
      EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
-    {EntityEnum::None, EntityEnum::LightTree, EntityEnum::None,
-     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
-     EntityEnum::None},
     {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
-     EntityEnum::None, EntityEnum::Soldier, EntityEnum::None, EntityEnum::None},
-    {EntityEnum::House, EntityEnum::None, EntityEnum::None,
-     EntityEnum::DarkTree, EntityEnum::LightTree, EntityEnum::None,
-     EntityEnum::House, EntityEnum::None},
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
+    {EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None,
+     EntityEnum::None, EntityEnum::None, EntityEnum::None, EntityEnum::None},
 };
+
+#include <stdlib.h> /* srand, rand */
+#include <time.h>   /* time */
+
+void ISOTileMap::randomMap() {
+
+  for (int i = 0; i < MAP_SIZE * MAP_SIZE; i++) {
+    entities[i % MAP_SIZE][i / MAP_SIZE] = EntityEnum::None;
+  }
+
+  int dificcult = 4;
+  srand(time(NULL));
+
+  int trees = rand() % 10 + 5;
+
+  for (int i = 0; i < trees; i++) {
+    int x = rand() % MAP_SIZE;
+    int y = rand() % MAP_SIZE;
+
+    entities[x][y] = rand() % 2 ? EntityEnum::LightTree : EntityEnum::DarkTree;
+  }
+
+  int house = rand() % 3 + 3;
+
+  for (int i = 0; i < house; i++) {
+    int x = rand() % MAP_SIZE / 2 + MAP_SIZE / 2;
+    int y = rand() % MAP_SIZE;
+
+    entities[x][y] = EntityEnum::House;
+  }
+
+  int hero = rand() % 3 + 1;
+
+  for (int i = 0; i < hero; i++) {
+    int x = rand() % MAP_SIZE / 2 + MAP_SIZE / 2;
+    int y = rand() % MAP_SIZE;
+
+    entities[x][y] = EntityEnum::Soldier;
+  }
+
+  int enemies = rand() % 2 + dificcult;
+
+  for (int i = 0; i < enemies; i++) {
+    int x = rand() % MAP_SIZE / 2;
+    int y = rand() % MAP_SIZE;
+
+    entities[x][y] = EntityEnum::Orc;
+  }
+}
 
 void ISOTileMap::add_tile(ISOTile tile) {}
 
@@ -54,20 +99,20 @@ auto ISOTileMap::generate_map() -> void {
     auto uvs = Rendering::Texture::get_tile_uvs(atlasDimensions, t->index);
 
 #if PSP
-        auto tInfo = Rendering::TextureManager::get().get_texture(texture);
+    auto tInfo = Rendering::TextureManager::get().get_texture(texture);
 
-        float wRatio = 1.0f;
-        float hRatio = 1.0f;
+    float wRatio = 1.0f;
+    float hRatio = 1.0f;
 
-        if (tInfo != nullptr) {
-            wRatio = (float)tInfo->width / (float)tInfo->pW;
-            hRatio = (float)tInfo->height / (float)tInfo->pH;
-        }
+    if (tInfo != nullptr) {
+      wRatio = (float)tInfo->width / (float)tInfo->pW;
+      hRatio = (float)tInfo->height / (float)tInfo->pH;
+    }
 
-        for (int i = 0; i < 4; i++) {
-            uvs[i * 2 + 0] *= wRatio;
-            uvs[i * 2 + 1] *= hRatio;
-        }
+    for (int i = 0; i < 4; i++) {
+      uvs[i * 2 + 0] *= wRatio;
+      uvs[i * 2 + 1] *= hRatio;
+    }
 #endif
 
     vert_data.push_back(
@@ -195,7 +240,8 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
     q.pop();
     // If move towards left is allowed or it is the destnation cell
     if (y - 1 >= 0 && (mat[x][y - 1] == EntityEnum::None ||
-                       mat[x][y - 1] == EntityEnum::Soldier)) {
+                       mat[x][y - 1] == EntityEnum::Soldier ||
+                       mat[x][y - 1] == EntityEnum::House)) {
       // if distance to reach the cell to the left is less than the computed
       // previous path distance, update it
       if (dist[x][y] + 1 < dist[x][y - 1]) {
@@ -207,7 +253,8 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
     }
     // If move towards right is allowed or it is the destination cell
     if (y + 1 < MAP_SIZE && (mat[x][y + 1] == EntityEnum::None ||
-                             mat[x][y + 1] == EntityEnum::Soldier)) {
+                             mat[x][y + 1] == EntityEnum::Soldier ||
+                             mat[x][y + 1] == EntityEnum::House)) {
       // if distance to reach the cell to the right is less than the computed
       // previous path distance, update it
       if (dist[x][y] + 1 < dist[x][y + 1]) {
@@ -218,7 +265,8 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
     }
     // If upward direction is allowed
     if (x - 1 >= 0 && (mat[x - 1][y] == EntityEnum::None ||
-                       mat[x - 1][y] == EntityEnum::Soldier)) {
+                       mat[x - 1][y] == EntityEnum::Soldier ||
+                       mat[x - 1][y] == EntityEnum::House)) {
       if (dist[x][y] + 1 < dist[x - 1][y]) {
         dist[x - 1][y] = dist[x][y] + 1;
         q.push(glm::vec2(x - 1, y));
@@ -228,7 +276,8 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
 
     // If downward direction allowed
     if (x + 1 < MAP_SIZE && (mat[x + 1][y] == EntityEnum::None ||
-                             mat[x + 1][y] == EntityEnum::Soldier)) {
+                             mat[x + 1][y] == EntityEnum::Soldier ||
+                             mat[x + 1][y] == EntityEnum::House)) {
       // if distance to reach the cell to the down is less than the computed
       // previous path distance, update it
       if (dist[x][y] + 1 < dist[x + 1][y]) {
@@ -242,6 +291,12 @@ vector<glm::vec2> calculateBFS(glm::vec2 ori, glm::vec2 dest,
 
   int p_x = dest.x;
   int p_y = dest.y;
+
+  if (parents[p_x][p_y].x == -1) {
+
+    return lista;
+  }
+
   do {
     auto vec = parents[p_x][p_y];
     p_x = vec.x;

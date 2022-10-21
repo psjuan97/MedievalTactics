@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cursor.hpp"
+#include "Entity.hpp"
 #include "EntityManager.hpp"
 #include "Utilities/Types.hpp"
 #include "Utils.hpp"
@@ -10,6 +11,7 @@
 #include "common.hpp"
 #include "fwd.hpp"
 #include <Stardust-Celeste.hpp>
+#include <cstddef>
 #include <vector>
 
 using namespace Stardust_Celeste;
@@ -23,6 +25,17 @@ public:
     return INSTANCE;
   }
 
+  void drawHud() {
+    hud_cursor->draw();
+    hud_cross->draw();
+    hud_square->draw();
+    hud_triangle->draw();
+    hud_circle->draw();
+
+
+  }
+
+  void newLevel() { tilemap->randomMap(); };
   auto getCursor() { return cursor; }
   void generateMap() {
 
@@ -32,14 +45,34 @@ public:
 
     tilemap->generate_map();
 
-    cursor = create_refptr<Cursor>(CURSOR, glm::vec2(1, 1));
+    cursor =
+        create_refptr<Cursor>(CURSOR, glm::vec2(MAP_SIZE / 2, MAP_SIZE / 2));
+
+    hud_cursor = create_scopeptr<Sprite>(
+        EntityManager::instance().hud_cursor,
+        Rendering::Rectangle{glm::vec2{25, 180}, glm::vec2{100, 20}});
+    hud_cross = create_scopeptr<Sprite>(
+        EntityManager::instance().hud_cross,
+        Rendering::Rectangle{glm::vec2{25, 220}, glm::vec2{100, 20}});
+
+    hud_square = create_scopeptr<Sprite>(
+        EntityManager::instance().hud_cross,
+        Rendering::Rectangle{glm::vec2{365, 200}, glm::vec2{100, 20}});
+
+    hud_triangle = create_scopeptr<Sprite>(
+        EntityManager::instance().hud_triangle,
+        Rendering::Rectangle{glm::vec2{360, 220}, glm::vec2{100, 20}});
+
+    hud_circle = create_scopeptr<Sprite>(
+        EntityManager::instance().hud_circle,
+        Rendering::Rectangle{glm::vec2{360, 240}, glm::vec2{100, 20}});
   }
 
   // son constantes
 
   void update(double dt); // movemos controles si es necesario
   void draw() {
-
+    drawHud();
     cursor->draw();
 
     if (tilemap.get() != nullptr)
@@ -74,7 +107,28 @@ public:
     for (int i = 0; i < tiles.size(); i++) {
       auto tile = tiles.at(i);
 
-      if (tile->entity && tile->entity->props.role == RoleEntity::Hero) {
+      if (tile->entity && (tile->entity->props.role == RoleEntity::Hero ||
+                           tile->entity->props.role == RoleEntity::Building)
+
+      ) {
+        list.push_back(tile->entity);
+      }
+    }
+
+    return list;
+  }
+
+
+std::vector<RefPtr<Entity>> getHouses() {
+
+    std::vector<RefPtr<Entity>> list = {};
+    auto tiles = tilemap->get_tile_map();
+    for (int i = 0; i < tiles.size(); i++) {
+      auto tile = tiles.at(i);
+
+      if (tile->entity && (tile->entity->props.role == RoleEntity::Building)
+
+      ) {
         list.push_back(tile->entity);
       }
     }
@@ -116,8 +170,12 @@ public:
   }
 
   void enemyTurn() {
-    auto l = getHeroEnt();
+    auto objetives = getHeroEnt();
     auto tiles = tilemap->get_tile_map();
+
+    if (objetives.size() == 0) {
+      return;
+    }
 
     for (int i = 0; i < tiles.size(); i++) {
       auto tile = tiles.at(i);
@@ -134,7 +192,22 @@ public:
           enemy->isMoved == false) {
         enemy->isMoved = true;
         SC_APP_INFO("Enemigo en tile {}", i);
-        auto hero = l[i % l.size()];
+        RefPtr<Entity> hero;
+
+        if (enemy->getObjetive()) {
+          if (!enemy->getObjetive()->isLife()) {
+            enemy->setObjetive(objetives[i % objetives.size()]);
+          }
+
+        } else {
+
+          // if no objetive, enemi won, skip all this code;
+
+          enemy->setObjetive(objetives[i % objetives.size()]);
+        }
+
+        hero = enemy->getObjetive();
+
         auto e_c = enemy->getCoords();
         auto h_c = hero->getCoords();
 
@@ -150,6 +223,11 @@ public:
         World::instance().getTile(enemy->getCoords())->entity = nullptr;
 
         // movemos la entidad al destino
+        // -1 -1
+        // hotifx no path
+        if (path.size() == 0) {
+          continue;
+        }
         enemy->setCoords(path.at(pathSize));
 
         // pintamos las tiles que hemos recorrido para mejor feedback con el
@@ -160,7 +238,7 @@ public:
         }
 
         // if distance between two is less than one tile, then no attack
-        if (pathSize == 1 ||pathSize == 0 ) { // is this correct?
+        if (pathSize == 1 || pathSize == 0) { // is this correct?
           showEnemyActions(enemy, hero);
           enemy->pedingAction = 1;
         }
@@ -191,4 +269,11 @@ private:
   World(){};
   ScopePtr<ISOTileMap> tilemap;
   RefPtr<Cursor> cursor;
+
+  ScopePtr<Sprite> hud_cursor;
+  ScopePtr<Sprite> hud_cross;
+
+  ScopePtr<Sprite> hud_square;
+  ScopePtr<Sprite> hud_triangle;
+  ScopePtr<Sprite> hud_circle;
 };
