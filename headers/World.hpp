@@ -1,4 +1,5 @@
 #pragma once
+#include <Audio/Clip.hpp>
 
 #include "Cursor.hpp"
 #include "Entity.hpp"
@@ -14,6 +15,12 @@
 #include <cstddef>
 #include <vector>
 
+#ifdef PSP
+const std::string PLATFORM_PREFIX = ".bgm";
+#else
+const std::string PLATFORM_PREFIX = ".ogg";
+#endif
+
 using namespace Stardust_Celeste;
 using namespace Stardust_Celeste::Utilities::Input;
 
@@ -25,14 +32,14 @@ public:
     return INSTANCE;
   }
 
+  auto playSound() -> void { music->play(); }
+
   void drawHud() {
     hud_cursor->draw();
     hud_cross->draw();
     hud_square->draw();
     hud_triangle->draw();
     hud_circle->draw();
-
-
   }
 
   void newLevel() { tilemap->randomMap(); };
@@ -56,8 +63,8 @@ public:
         Rendering::Rectangle{glm::vec2{25, 220}, glm::vec2{100, 20}});
 
     hud_square = create_scopeptr<Sprite>(
-        EntityManager::instance().hud_cross,
-        Rendering::Rectangle{glm::vec2{365, 200}, glm::vec2{100, 20}});
+        EntityManager::instance().hud_square,
+        Rendering::Rectangle{glm::vec2{360, 200}, glm::vec2{100, 20}});
 
     hud_triangle = create_scopeptr<Sprite>(
         EntityManager::instance().hud_triangle,
@@ -66,6 +73,11 @@ public:
     hud_circle = create_scopeptr<Sprite>(
         EntityManager::instance().hud_circle,
         Rendering::Rectangle{glm::vec2{360, 240}, glm::vec2{100, 20}});
+
+    if (!music) {
+      music =
+          create_scopeptr<Audio::Clip>("assets/music" + PLATFORM_PREFIX, true);
+    }
   }
 
   // son constantes
@@ -74,7 +86,6 @@ public:
   void draw() {
     drawHud();
     cursor->draw();
-
     if (tilemap.get() != nullptr)
       tilemap->draw();
 
@@ -118,8 +129,7 @@ public:
     return list;
   }
 
-
-std::vector<RefPtr<Entity>> getHouses() {
+  std::vector<RefPtr<Entity>> getHouses() {
 
     std::vector<RefPtr<Entity>> list = {};
     auto tiles = tilemap->get_tile_map();
@@ -276,4 +286,6 @@ private:
   ScopePtr<Sprite> hud_square;
   ScopePtr<Sprite> hud_triangle;
   ScopePtr<Sprite> hud_circle;
+
+  ScopePtr<Audio::Clip> music = nullptr;
 };

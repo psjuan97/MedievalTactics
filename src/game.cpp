@@ -70,6 +70,7 @@ public:
     Rendering::RenderContext::get().set_mode_2D();
 
     World::instance().generateMap();
+    World::instance().playSound();
 
     /*str = "You Loose. START Again";
     size = font_renderer->calculate_size(str);
