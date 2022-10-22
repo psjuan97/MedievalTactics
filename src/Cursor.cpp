@@ -49,6 +49,12 @@ void Cursor::attackEntity() {
     if (valid && objetive != nullptr) {
       SC_APP_INFO("Atacamos entidad!!!");
 
+      if (selectedEntity->props.enumType != EntityEnum::Orc &&
+          selectedEntity->props.enumType != EntityEnum::Soldier) {
+
+            return;
+      }
+
       World::instance().showEnemyActions(selectedEntity, objetive);
 
       // DESENCADENAR ATAQUE
