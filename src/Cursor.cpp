@@ -63,6 +63,15 @@ void Cursor::attackEntity() {
   }
 }
 
+void Cursor::attackConsequences(){
+  //dado un puñetazo, tenemos que indicar que el objetivo va a recibir uno de vida 
+  if (selectedEntity) {
+    auto entityCoords = selectedEntity->getCoords();
+    auto cursorCoords = this->coords;
+  }
+}
+
+
 void Cursor::moveEntity() {
 
   // is valid movement?
@@ -118,7 +127,7 @@ void Cursor::selectEntity() {
 
   if (ent) {
 
-    if (ent->props.enumType == EntityEnum::Orc) {
+    if (ent->props.enumType != EntityEnum::Soldier) {
       return;
     }
 
@@ -136,6 +145,8 @@ void Cursor::selectEntity() {
   World::instance().flushTileMap();
 }
 
+//Cuando pasas sobre una celda obtienes mas informacion
+// Por ejeplo si la celta tiene una entidad onbtienes su vida y la pintas 
 void Cursor::move(Direction dir) {
 
   switch (dir) {
@@ -158,6 +169,16 @@ void Cursor::move(Direction dir) {
   }
 
   this->applyChange();
+
+  int idx = this->coords.y + coords.x * MAP_SIZE;
+  auto ent = World::instance().getEntity(idx);
+
+  if(ent){
+
+    ent->generateLifeHud(EntityManager::instance().life);
+
+  }
+
 }
 
 void Cursor::applyChange() {

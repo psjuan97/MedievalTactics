@@ -85,10 +85,16 @@ public:
 
   void setObjetive(RefPtr<Entity> e) { objetive = e; }
 
-  bool isLife(){
-    return life>0;
-  }
+  bool isLife() { return life > 0; }
   RefPtr<Entity> getObjetive() { return objetive; }
+
+  void generateLifeHud(u32 life_id) {
+    auto pos = calculate_pixels(coords.x, coords.y);
+
+    life_sprite = create_scopeptr<Sprite>(
+        life_id, Rendering::Rectangle{pos, glm::vec2{8, 6}});
+    life_sprite->set_layer(1);
+  }
 
 protected:
   glm::vec2 coords;
@@ -98,6 +104,8 @@ protected:
   RefPtr<Graphics::G2D::Sprite> sprite = nullptr;
   RefPtr<Graphics::G2D::Sprite> arrow = nullptr;
   RefPtr<Graphics::G2D::AnimatedSprite> actionSprite = nullptr;
-
+  bool showLife = false;
   RefPtr<Entity> objetive = nullptr;
+
+  RefPtr<Graphics::G2D::Sprite> life_sprite = nullptr;
 };

@@ -61,6 +61,10 @@ void Entity::draw() {
     else
       SC_APP_INFO("INVISIBLE ENTITY");
   }
+
+  if (life_sprite) {
+    life_sprite->draw();
+  }
 };
 
 glm::vec2 Entity::getCoords() { return coords; }
@@ -103,7 +107,7 @@ void Entity::attack(RefPtr<Entity> objetive) {
 
   // mebye here is not a good ide
   objetive->receiveDamage(this->props.attack);
-  
+
   this->objetive = nullptr;
   this->refreshAttackSprite();
   this->pedingAction = 2;

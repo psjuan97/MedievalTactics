@@ -73,6 +73,11 @@ EntityManager::EntityManager() {
       "./assets/graveyard.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
       true);
 
+  life = Rendering::TextureManager::get().load_texture(
+      "./assets/vidas.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
+      true);
+
+
   hud_cursor = Rendering::TextureManager::get().load_texture(
       "./assets/hud_cursor.png", SC_TEX_FILTER_NEAREST, SC_TEX_FILTER_NEAREST,
       true);

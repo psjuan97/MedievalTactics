@@ -15,6 +15,7 @@ public:
   void selectEntity();
   void moveEntity();
   void attackEntity();
+  void attackConsequences();
 
 
   void move(Direction dir);

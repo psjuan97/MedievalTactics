@@ -33,6 +33,8 @@ public:
   u32 hud_square;
   u32 hud_triangle;
   u32 hud_circle;
+
+  u32 life;
 private:
   EntityManager();
   
